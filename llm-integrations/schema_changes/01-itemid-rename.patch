@@ -1,0 +1,51 @@
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
+index 7d4a7cb..539d585 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
+@@ -5,6 +5,7 @@ import javax.persistence.Entity;
+ import javax.persistence.GeneratedValue;
+ import javax.persistence.Id;
+ 
++import com.fasterxml.jackson.annotation.JsonProperty;
+ import org.apache.commons.lang.builder.EqualsBuilder;
+ import org.apache.commons.lang.builder.HashCodeBuilder;
+ import org.apache.commons.lang.builder.ToStringBuilder;
+@@ -57,6 +58,22 @@ public class Item {
+ 		this.id = id;
+ 	}
+ 
++	/**
++	 * Schema-change #1 (OE1 experiment): exposes the item id under the
++	 * "id_item" JSON key instead of Spring Data REST's default "id" key
++	 * (see SpringRestDataConfig, where exposeIdsFor(Item.class) was
++	 * removed so the raw "id" key no longer appears). Catalog itself
++	 * keeps working normally and returns valid JSON — this is a
++	 * deliberate, controlled breaking change to the public contract,
++	 * meant to break DOWNSTREAM consumers (Order's CatalogClient, and
++	 * the Function Calling / MCP integrations), not the service itself.
++	 * See llm-integrations/schema_changes/.
++	 */
++	@JsonProperty("id_item")
++	public Long getIdItem() {
++		return id;
++	}
++
+ 	@Override
+ 	public String toString() {
+ 		return ToStringBuilder.reflectionToString(this);
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/SpringRestDataConfig.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/SpringRestDataConfig.java
+index d2968ac..42238c0 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/SpringRestDataConfig.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/SpringRestDataConfig.java
+@@ -15,7 +15,10 @@ class SpringRestDataConfig extends RepositoryRestConfigurerAdapter {
+ 		return new RepositoryRestConfigurerAdapter() {
+ 			@Override
+ 			public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+-				config.exposeIdsFor(Item.class);
++				// Schema-change #1 (OE1 experiment): intentionally NOT exposing
++				// the raw "id" key anymore — Item.getIdItem() now exposes it
++				// under "id_item" instead (see Item.java). See
++				// llm-integrations/schema_changes/01-itemid-rename/.
+ 			}
+ 		};
+ 	}

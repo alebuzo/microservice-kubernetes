@@ -1,0 +1,86 @@
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
+index 7d4a7cb..ec35ae3 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-catalog/src/main/java/com/ewolff/microservice/catalog/Item.java
+@@ -5,6 +5,8 @@ import javax.persistence.Entity;
+ import javax.persistence.GeneratedValue;
+ import javax.persistence.Id;
+ 
++import com.fasterxml.jackson.annotation.JsonIgnore;
++import com.fasterxml.jackson.annotation.JsonProperty;
+ import org.apache.commons.lang.builder.EqualsBuilder;
+ import org.apache.commons.lang.builder.HashCodeBuilder;
+ import org.apache.commons.lang.builder.ToStringBuilder;
+@@ -41,14 +43,72 @@ public class Item {
+ 		this.name = name;
+ 	}
+ 
++	@JsonIgnore
+ 	public double getPrice() {
+ 		return price;
+ 	}
+ 
++	@JsonIgnore
+ 	public void setPrice(double price) {
+ 		this.price = price;
+ 	}
+ 
++	/**
++	 * Schema-change #2 (OE1 experiment): exposes price as a nested
++	 * "{amount, currency}" object instead of a flat number, as a
++	 * deliberate, controlled breaking change to the public Catalog
++	 * contract (currency is fixed to "EUR" — no multi-currency support
++	 * was added, only the wire shape changed). Catalog itself keeps
++	 * working normally; this is meant to break DOWNSTREAM consumers
++	 * (Order's CatalogClient, and the Function Calling / MCP
++	 * integrations), not the service itself. See
++	 * llm-integrations/schema_changes/.
++	 */
++	@JsonProperty("price")
++	public Price getPriceInfo() {
++		return new Price(price, "EUR");
++	}
++
++	@JsonProperty("price")
++	public void setPriceInfo(Price priceInfo) {
++		if (priceInfo != null) {
++			this.price = priceInfo.getAmount();
++		}
++	}
++
++	public static class Price {
++
++		private double amount;
++
++		private String currency;
++
++		public Price() {
++			super();
++		}
++
++		public Price(double amount, String currency) {
++			super();
++			this.amount = amount;
++			this.currency = currency;
++		}
++
++		public double getAmount() {
++			return amount;
++		}
++
++		public void setAmount(double amount) {
++			this.amount = amount;
++		}
++
++		public String getCurrency() {
++			return currency;
++		}
++
++		public void setCurrency(String currency) {
++			this.currency = currency;
++		}
++	}
++
+ 	public Long getId() {
+ 		return id;
+ 	}

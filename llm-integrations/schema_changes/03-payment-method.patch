@@ -1,0 +1,51 @@
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderJsonController.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderJsonController.java
+index 55c16bf..84f520b 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderJsonController.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderJsonController.java
+@@ -43,6 +43,9 @@ class OrderJsonController {
+ 	@PostMapping
+ 	@ResponseStatus(HttpStatus.CREATED)
+ 	public OrderResponse create(@RequestBody OrderRequest request) {
++		if (request.getPaymentMethod() == null || request.getPaymentMethod().trim().isEmpty()) {
++			throw new IllegalArgumentException("paymentMethod is required");
++		}
+ 		Order order = new Order(request.getCustomerId());
+ 		if (request.getOrderLine() != null) {
+ 			request.getOrderLine().forEach(
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderRequest.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderRequest.java
+index b1ab960..20fb529 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderRequest.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/logic/OrderRequest.java
+@@ -13,6 +13,17 @@ public class OrderRequest {
+ 
+ 	private List<OrderLineRequest> orderLine;
+ 
++	/**
++	 * Schema-change #3 (OE1 experiment): new required field on order
++	 * creation. Not yet persisted anywhere (the {@link Order} entity is
++	 * unchanged) — this models a common real-world partial rollout where
++	 * the public contract gains a required field before the backing
++	 * schema/persistence catches up. Validated in
++	 * {@link OrderJsonController#create}: a missing/blank paymentMethod
++	 * is rejected with HTTP 400. See llm-integrations/schema_changes/.
++	 */
++	private String paymentMethod;
++
+ 	public long getCustomerId() {
+ 		return customerId;
+ 	}
+@@ -29,6 +40,14 @@ public class OrderRequest {
+ 		this.orderLine = orderLine;
+ 	}
+ 
++	public String getPaymentMethod() {
++		return paymentMethod;
++	}
++
++	public void setPaymentMethod(String paymentMethod) {
++		this.paymentMethod = paymentMethod;
++	}
++
+ 	public static class OrderLineRequest {
+ 
+ 		private long itemId;
