@@ -14,7 +14,7 @@ class OrderService {
 	private CatalogClient itemClient;
 
 	@Autowired
-	private OrderService(OrderRepository orderRepository,
+	OrderService(OrderRepository orderRepository,
 			CustomerClient customerClient, CatalogClient itemClient) {
 		super();
 		this.orderRepository = orderRepository;
@@ -28,6 +28,12 @@ class OrderService {
 		}
 		if (!customerClient.isValidCustomerId(order.getCustomerId())) {
 			throw new IllegalArgumentException("Customer does not exist!");
+		}
+		for (OrderLine orderLine : order.getOrderLine()) {
+			if (!itemClient.exists(orderLine.getItemId())) {
+				throw new IllegalArgumentException(
+						"Item does not exist: " + orderLine.getItemId());
+			}
 		}
 		return orderRepository.save(order);
 	}

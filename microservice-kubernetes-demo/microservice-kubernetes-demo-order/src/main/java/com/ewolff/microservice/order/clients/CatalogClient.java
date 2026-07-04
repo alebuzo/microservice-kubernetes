@@ -14,6 +14,7 @@ import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -55,6 +56,18 @@ public class CatalogClient {
 
 	public double price(long itemId) {
 		return getOne(itemId).getPrice();
+	}
+
+	public boolean exists(long itemId) {
+		try {
+			Item item = getOne(itemId);
+			return item != null;
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode().value() == 404) {
+				return false;
+			}
+			throw e;
+		}
 	}
 
 	public Collection<Item> findAll() {

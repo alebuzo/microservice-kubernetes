@@ -1,0 +1,4 @@
+- Escribe en español
+- Si vas a actualizar el plan, usa plan.md. Si hay una tarea nueva, actualiza la lista de tareas por completar con el nuevo orden.
+- Actualiza el plan cuando se termine alguna tarea, pregunta por confirmación antes de marcar una tarea como completada
+- Dime que vas a hacer al inicio de cada tarea y dime los resultados al final de cada tarea. Quiero saber si la tarea fue completada con éxito o si hubo algún problema.

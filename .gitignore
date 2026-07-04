@@ -15,3 +15,15 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+
+# Secrets / local env (never commit API keys)
+.env
+.env.*
+api_key
+*.key
+*api_key*
+llm-integrations/.venv/
+llm-integrations/**/__pycache__/
+llm-integrations/**/*.csv
+llm-integrations/**/*.log
+llm-integrations/experiments/results/
