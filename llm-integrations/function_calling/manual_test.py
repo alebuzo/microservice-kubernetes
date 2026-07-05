@@ -24,8 +24,8 @@ CASES: list[tuple[str, dict]] = [
     ("get_catalog_item", {"item_id": 9999}),  # expected error
     ("get_customer", {"customer_id": 1}),
     ("get_customer", {"customer_id": 9999}),  # expected error
-    ("create_order", {"customer_id": 1, "order_lines": [{"item_id": 1, "count": 1}]}),
-    ("create_order", {"customer_id": 1, "order_lines": [{"item_id": 9999, "count": 1}]}),  # expected error
+    ("create_order", {"customer_id": 1, "order_lines": [{"item_id": 1, "count": 1}], "payment_method": "card"}),
+    ("create_order", {"customer_id": 1, "order_lines": [{"item_id": 9999, "count": 1}], "payment_method": "card"}),  # expected error
 ]
 
 

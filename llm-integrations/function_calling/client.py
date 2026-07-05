@@ -36,6 +36,7 @@ TOOL_FUNCTIONS = {
             {"itemId": line["item_id"], "count": line["count"]}
             for line in args["order_lines"]
         ],
+        payment_method=args["payment_method"],
     ),
     "get_order": lambda args: get_order(args["order_id"]),
 }

@@ -68,7 +68,8 @@ TOOL_DEFINITIONS: list[dict] = [
             "of order lines (item id + quantity). The Order service validates that the "
             "customer and every item id actually exist (calling Customer and Catalog "
             "internally) before accepting the order; if any id is invalid it returns an "
-            "error instead of creating the order."
+            "error instead of creating the order. A payment method is required; if the "
+            "user doesn't mention one, ask them for it before calling this tool."
         ),
         "input_schema": {
             "type": "object",
@@ -89,8 +90,15 @@ TOOL_DEFINITIONS: list[dict] = [
                         "required": ["item_id", "count"],
                     },
                 },
+                "payment_method": {
+                    "type": "string",
+                    "description": (
+                        "How the customer wants to pay (e.g. 'card', 'paypal', 'cash'). "
+                        "Free-form text; required by the Order service."
+                    ),
+                },
             },
-            "required": ["customer_id", "order_lines"],
+            "required": ["customer_id", "order_lines", "payment_method"],
         },
     },
     {
