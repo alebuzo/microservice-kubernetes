@@ -17,14 +17,14 @@ Instrucciones completas del ciclo de trabajo en la conversación de la sesión
 - **Notas**: qué archivo(s) tocaste y por qué (ej. "ajustar parseo de
   `price` en `common/services.py`, ahora es un dict anidado").
 
-## itemid-rename (Catalog: `id` → `id_item`)
+## itemid-rename (Catalog: `id` → `id_item`) Prompt: El id del Apple TV es 3?
 
 | Arquitectura     | Inicio | Fin | Tiempo (min) | Archivos modificados | Líneas + | Líneas − | Notas |
 |------------------|--------|-----|--------------|-----------------------|----------|----------|-------|
-| Function Calling |        |     |              |                       |          |          |       |
-| MCP              |        |     |              |                       |          |          |       |
+| Function Calling |   -     |  -   |      0        |           0            |     0     |     0     |    No se necesitaron cambios . LLM round trips: 2. Tool calls (1) |
+| MCP              |   -     |   -  |        0      |               0        |     0     |    0      |   No se necesitó cambios. LLM round trips: 2. Tool calls (1) |
 
-## price-nested (Catalog: `price` flat → `{amount, currency}`)
+## price-nested (Catalog: `price` flat → `{amount, currency}`) Prompt: ¿en qué moneda está el precio del producto 1?
 
 | Arquitectura     | Inicio | Fin | Tiempo (min) | Archivos modificados | Líneas + | Líneas − | Notas |
 |------------------|--------|-----|--------------|-----------------------|----------|----------|-------|
@@ -35,8 +35,8 @@ Instrucciones completas del ciclo de trabajo en la conversación de la sesión
 
 | Arquitectura     | Inicio | Fin | Tiempo (min) | Archivos modificados | Líneas + | Líneas − | Notas |
 |------------------|--------|-----|--------------|-----------------------|----------|----------|-------|
-| Function Calling |        |     |              |                       |          |          |       |
-| MCP              |        |     |              |                       |          |          |       |
+| Function Calling |        |     |              |                       |          |          | LLM round trips: 3. Tool calls (4): No hubo retry  . LLM dijo que lo arregle    |
+| MCP              |        |     |              |                       |          |          |LLM round trips: 4 Tool calls (5): Intentó crear la orden dos veces . LLM dijo que lo arregle     |
 
 ## Resumen final (llenar al terminar las 3 variantes)
 
