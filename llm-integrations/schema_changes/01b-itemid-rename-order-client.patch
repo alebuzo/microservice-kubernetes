@@ -1,0 +1,18 @@
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
+index 49c177a..598fe5a 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
+@@ -13,7 +13,12 @@ public class Item extends RepresentationModel {
+ 
+ 	private double price;
+ 
+-	@JsonProperty("id")
++	// Schema change 'itemid-rename': Catalog now exposes this field as
++	// "id_item" instead of "id" (see the Catalog Item.java patch). Updated
++	// here so Order's own consumers (e.g. OrderController's HTML demo flow,
++	// which reads getItemId() from a fetched Catalog Item) keep working
++	// correctly, rather than silently deserializing to 0.
++	@JsonProperty("id_item")
+ 	private long itemId;
+ 
+ 	public Item() {

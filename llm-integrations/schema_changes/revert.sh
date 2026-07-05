@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# Revert one of the 3 controlled schema changes, restoring the affected
+# Revert one of the 3 controlled schema changes, restoring EVERY affected
 # Deployment to THIS PROJECT's own baseline image — NOT necessarily the
 # original public ewolff image:
 #   itemid-rename  -> catalog -> docker.io/ewolff/microservice-kubernetes-demo-catalog:latest
 #                     (Catalog was never otherwise modified by this project,
 #                     so its baseline IS the original public image.)
+#                  -> order   -> microservice-kubernetes-demo-order:local
+#                     (itemid-rename also touched Order's own Catalog client
+#                     DTO, clients/Item.java, so Order must revert too.)
 #   price-nested   -> catalog -> docker.io/ewolff/microservice-kubernetes-demo-catalog:latest
 #   payment-method -> order   -> microservice-kubernetes-demo-order:local
 #                     (Order's baseline for this project is the LOCAL image
@@ -18,22 +21,24 @@
 
 set -euo pipefail
 
-declare -A SERVICE_FOR=(
-  [itemid-rename]=catalog
-  [price-nested]=catalog
-  [payment-method]=order
+declare -A SERVICES_FOR=(
+  [itemid-rename]="catalog order"
+  [price-nested]="catalog"
+  [payment-method]="order"
 )
 
 declare -A BASELINE_IMAGE_FOR=(
-  [itemid-rename]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
-  [price-nested]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
-  [payment-method]="microservice-kubernetes-demo-order:local"
+  [itemid-rename:catalog]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
+  [itemid-rename:order]="microservice-kubernetes-demo-order:local"
+  [price-nested:catalog]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
+  [payment-method:order]="microservice-kubernetes-demo-order:local"
 )
 
 declare -A PULL_POLICY_FOR=(
-  [itemid-rename]="IfNotPresent"
-  [price-nested]="IfNotPresent"
-  [payment-method]="Never"
+  [itemid-rename:catalog]="IfNotPresent"
+  [itemid-rename:order]="Never"
+  [price-nested:catalog]="IfNotPresent"
+  [payment-method:order]="Never"
 )
 
 usage() {
@@ -42,21 +47,10 @@ usage() {
 }
 
 variant="${1:-}"
-[[ -n "$variant" && -n "${SERVICE_FOR[$variant]:-}" ]] || usage
+[[ -n "$variant" && -n "${SERVICES_FOR[$variant]:-}" ]] || usage
 
-service="${SERVICE_FOR[$variant]}"
-image="${BASELINE_IMAGE_FOR[$variant]}"
-pull_policy="${PULL_POLICY_FOR[$variant]}"
-
-echo "== Reverting '$service' to this project's baseline image ($image) =="
-
-if [[ "$pull_policy" == "Never" ]]; then
-  if ! docker image inspect "$image" >/dev/null 2>&1; then
-    echo "ERROR: $image not found locally. Rebuild it first (see plan.md's" >&2
-    echo "order-json-endpoint progress entry for the exact commands)." >&2
-    exit 1
-  fi
-
+import_image_to_containerd() {
+  local image="$1"
   echo "-- Re-importing $image into the K8s node's containerd (in case it"
   echo "   was evicted since it was last imported)"
   docker save "$image" -o /tmp/schema-change-revert-image.tar
@@ -64,11 +58,11 @@ if [[ "$pull_policy" == "Never" ]]; then
   (kubectl debug node/desktop-control-plane -it --image=busybox --profile=sysadmin \
     -- chroot /host sh -c "sleep 300" >/tmp/schema-change-revert-debug.log 2>&1 &)
   sleep 5
-  debug_pod=""
+  local debug_pod=""
   for _ in $(seq 1 10); do
     while IFS= read -r pod_name; do
       [[ -z "$pod_name" ]] && continue
-      is_new=true
+      local is_new=true
       for existing in "${before_debug_pods[@]:-}"; do
         [[ "$pod_name" == "$existing" ]] && is_new=false && break
       done
@@ -89,11 +83,28 @@ if [[ "$pull_policy" == "Never" ]]; then
   kubectl exec "$debug_pod" -- chroot /host sh -c "ctr -n k8s.io images import /tmp/schema-change-revert-image.tar"
   kubectl delete pod "$debug_pod" --wait=false >/dev/null
   rm -f /tmp/schema-change-revert-image.tar
-fi
+}
 
-kubectl patch deployment "$service" --type=json -p \
-  "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"$image\"},
-    {\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/imagePullPolicy\",\"value\":\"$pull_policy\"}]"
-kubectl rollout status "deployment/$service" --timeout=60s
+for service in ${SERVICES_FOR[$variant]}; do
+  image="${BASELINE_IMAGE_FOR[$variant:$service]}"
+  pull_policy="${PULL_POLICY_FOR[$variant:$service]}"
 
-echo "== Done. '$service' is back on this project's baseline ($image) =="
+  echo
+  echo "== Reverting '$service' to this project's baseline image ($image) =="
+
+  if [[ "$pull_policy" == "Never" ]]; then
+    if ! docker image inspect "$image" >/dev/null 2>&1; then
+      echo "ERROR: $image not found locally. Rebuild it first (see plan.md's" >&2
+      echo "order-json-endpoint progress entry for the exact commands)." >&2
+      exit 1
+    fi
+    import_image_to_containerd "$image"
+  fi
+
+  kubectl patch deployment "$service" --type=json -p \
+    "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"$image\"},
+      {\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/imagePullPolicy\",\"value\":\"$pull_policy\"}]"
+  kubectl rollout status "deployment/$service" --timeout=60s
+
+  echo "== Done. '$service' is back on this project's baseline ($image) =="
+done
