@@ -63,7 +63,7 @@ def create_customer(name: str, firstname: str, email: str, street: str, city: st
 
 
 @mcp.tool()
-def create_order(customer_id: int, order_lines: list[dict]) -> dict:
+def create_order(customer_id: int, order_lines: list[dict], payment_method: str) -> dict:
     """Create a new order in the Order service for a given customer and a
     list of order lines (each `{"item_id": <int>, "count": <int>}`).
 
@@ -71,10 +71,14 @@ def create_order(customer_id: int, order_lines: list[dict]) -> dict:
     actually exist (calling Customer and Catalog internally) before
     accepting the order; if any id is invalid it returns an error instead
     of creating the order.
+
+    `payment_method` is required (e.g. "card", "paypal", "cash" -
+    free-form text). If the user doesn't mention one, ask them for it
+    before calling this tool.
     """
     try:
         lines = [{"itemId": line["item_id"], "count": line["count"]} for line in order_lines]
-        return _create_order(customer_id=customer_id, order_lines=lines)
+        return _create_order(customer_id=customer_id, order_lines=lines, payment_method=payment_method)
     except ServiceCallError as exc:
         return {"error": str(exc), "status_code": exc.status_code}
     except KeyError as exc:

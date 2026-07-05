@@ -87,14 +87,23 @@ def create_customer(name: str, firstname: str, email: str, street: str, city: st
     return _request("POST", f"{CUSTOMER_BASE_URL}/customer", json=payload)
 
 
-def create_order(customer_id: int, order_lines: list[dict]) -> dict:
+def create_order(customer_id: int, order_lines: list[dict], payment_method: str) -> dict:
     """Alto scenario: create a new order (`POST /orders`).
 
     `order_lines` items look like `{"itemId": <int>, "count": <int>}`.
     Order service validates both `customer_id` and every `itemId` against
     Customer/Catalog before accepting the order (see `order-item-validation-fix`).
+
+    `payment_method` is required since schema-change #3 (`payment-method`):
+    the Order service now rejects requests with a missing/blank
+    `paymentMethod` field with HTTP 400. Any non-empty string is accepted
+    server-side (no fixed enum).
     """
-    payload = {"customerId": customer_id, "orderLine": order_lines}
+    payload = {
+        "customerId": customer_id,
+        "orderLine": order_lines,
+        "paymentMethod": payment_method,
+    }
     return _request("POST", f"{ORDER_BASE_URL}/orders", json=payload)
 
 
