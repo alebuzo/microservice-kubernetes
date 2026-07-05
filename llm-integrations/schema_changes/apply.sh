@@ -31,6 +31,18 @@
 #                      the guiding principle that only the *LLM integration layer*
 #                      — not the microservices/consumers themselves — should break.)
 #   price-nested    -> catalog -> microservice-kubernetes-demo-catalog:schema-price-nested
+#                      (Catalog: nests "price" into {amount, currency})
+#                   -> order   -> microservice-kubernetes-demo-order:schema-price-nested
+#                      (Order: updates its own Catalog client DTO, clients/Item.java,
+#                      with an equivalent nested Price class. Without this, Jackson
+#                      throws MismatchedInputException while deserializing ANY Item
+#                      fetched from Catalog — CatalogClient.getOne()/exists()/price()/
+#                      findAll() all deserialize the full Item including "price" — and
+#                      since only HttpClientErrorException is caught, this propagated
+#                      as an uncaught exception: Order's own POST /orders returned
+#                      HTTP 500. This was verified live before the fix. Fixing it keeps
+#                      the guiding principle that only the LLM integration layer, not
+#                      the microservices themselves, should break.)
 #   payment-method  -> order   -> microservice-kubernetes-demo-order:schema-payment-method
 #
 # `revert.sh` restores this project's own baseline for each affected service
@@ -47,7 +59,7 @@ DEMO_DIR="$REPO_ROOT/microservice-kubernetes-demo"
 
 declare -A SERVICES_FOR=(
   [itemid-rename]="catalog order"
-  [price-nested]="catalog"
+  [price-nested]="catalog order"
   [payment-method]="order"
 )
 
@@ -55,6 +67,7 @@ declare -A IMAGE_FOR=(
   [itemid-rename:catalog]="microservice-kubernetes-demo-catalog:schema-itemid-rename"
   [itemid-rename:order]="microservice-kubernetes-demo-order:schema-itemid-rename"
   [price-nested:catalog]="microservice-kubernetes-demo-catalog:schema-price-nested"
+  [price-nested:order]="microservice-kubernetes-demo-order:schema-price-nested"
   [payment-method:order]="microservice-kubernetes-demo-order:schema-payment-method"
 )
 
@@ -62,6 +75,7 @@ declare -A PATCH_FOR=(
   [itemid-rename:catalog]="$SCRIPT_DIR/01-itemid-rename.patch"
   [itemid-rename:order]="$SCRIPT_DIR/01b-itemid-rename-order-client.patch"
   [price-nested:catalog]="$SCRIPT_DIR/02-price-nested.patch"
+  [price-nested:order]="$SCRIPT_DIR/02b-price-nested-order-client.patch"
   [payment-method:order]="$SCRIPT_DIR/03-payment-method.patch"
 )
 

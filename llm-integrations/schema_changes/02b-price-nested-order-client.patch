@@ -1,0 +1,90 @@
+diff --git a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
+index 49c177a..9dccb79 100644
+--- a/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
++++ b/microservice-kubernetes-demo/microservice-kubernetes-demo-order/src/main/java/com/ewolff/microservice/order/clients/Item.java
+@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
+ import org.apache.commons.lang.builder.ToStringBuilder;
+ import org.springframework.hateoas.RepresentationModel;
+ 
++import com.fasterxml.jackson.annotation.JsonIgnore;
+ import com.fasterxml.jackson.annotation.JsonProperty;
+ 
+ public class Item extends RepresentationModel {
+@@ -35,14 +36,72 @@ public class Item extends RepresentationModel {
+ 		this.name = name;
+ 	}
+ 
++	@JsonIgnore
+ 	public double getPrice() {
+ 		return price;
+ 	}
+ 
++	@JsonIgnore
+ 	public void setPrice(double price) {
+ 		this.price = price;
+ 	}
+ 
++	/**
++	 * Schema change 'price-nested': Catalog now exposes "price" as a
++	 * nested "{amount, currency}" object instead of a flat number (see the
++	 * Catalog Item.java patch). Without this, Jackson throws
++	 * MismatchedInputException while deserializing ANY Item fetched from
++	 * Catalog (CatalogClient.getOne()/exists()/price()/findAll() all
++	 * deserialize the full Item, including "price"), which propagated as
++	 * an uncaught exception -> Order's own POST /orders returned HTTP 500.
++	 * This mirrors Catalog's own nested Price class to keep Order's own
++	 * API fully functional after the schema change.
++	 */
++	@JsonProperty("price")
++	public Price getPriceInfo() {
++		return new Price(price, "EUR");
++	}
++
++	@JsonProperty("price")
++	public void setPriceInfo(Price priceInfo) {
++		if (priceInfo != null) {
++			this.price = priceInfo.getAmount();
++		}
++	}
++
++	public static class Price {
++
++		private double amount;
++
++		private String currency;
++
++		public Price() {
++			super();
++		}
++
++		public Price(double amount, String currency) {
++			super();
++			this.amount = amount;
++			this.currency = currency;
++		}
++
++		public double getAmount() {
++			return amount;
++		}
++
++		public void setAmount(double amount) {
++			this.amount = amount;
++		}
++
++		public String getCurrency() {
++			return currency;
++		}
++
++		public void setCurrency(String currency) {
++			this.currency = currency;
++		}
++	}
++
+ 	public long getItemId() {
+ 		return itemId;
+ 	}
+@@ -68,3 +127,4 @@ public class Item extends RepresentationModel {
+ 	}
+ 
+ }
++

@@ -9,6 +9,9 @@
 #                     (itemid-rename also touched Order's own Catalog client
 #                     DTO, clients/Item.java, so Order must revert too.)
 #   price-nested   -> catalog -> docker.io/ewolff/microservice-kubernetes-demo-catalog:latest
+#                  -> order   -> microservice-kubernetes-demo-order:local
+#                     (price-nested also touched Order's own Catalog client DTO,
+#                     clients/Item.java, so Order must revert too.)
 #   payment-method -> order   -> microservice-kubernetes-demo-order:local
 #                     (Order's baseline for this project is the LOCAL image
 #                     built in order-item-validation-fix/order-json-endpoint,
@@ -23,7 +26,7 @@ set -euo pipefail
 
 declare -A SERVICES_FOR=(
   [itemid-rename]="catalog order"
-  [price-nested]="catalog"
+  [price-nested]="catalog order"
   [payment-method]="order"
 )
 
@@ -31,6 +34,7 @@ declare -A BASELINE_IMAGE_FOR=(
   [itemid-rename:catalog]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
   [itemid-rename:order]="microservice-kubernetes-demo-order:local"
   [price-nested:catalog]="docker.io/ewolff/microservice-kubernetes-demo-catalog:latest"
+  [price-nested:order]="microservice-kubernetes-demo-order:local"
   [payment-method:order]="microservice-kubernetes-demo-order:local"
 )
 
@@ -38,6 +42,7 @@ declare -A PULL_POLICY_FOR=(
   [itemid-rename:catalog]="IfNotPresent"
   [itemid-rename:order]="Never"
   [price-nested:catalog]="IfNotPresent"
+  [price-nested:order]="Never"
   [payment-method:order]="Never"
 )
 
