@@ -1,0 +1,110 @@
+{
+  "run_id": "1783218424164-7c174d42",
+  "timestamp_utc": "2026-07-05T02:27:04Z",
+  "mode": "mcp",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 3,
+  "tool_call_count": 4,
+  "total_latency_ms": 10066.05,
+  "tool_latency_ms_sum": 249.3,
+  "had_error": false,
+  "final_text": "\u00a1Orden creada exitosamente! \ud83c\udf89 Aqu\u00ed tienes el resumen:\n\n| Campo | Detalle |\n|---|---|\n| **ID de Orden** | 8 |\n| **Cliente** | Rod Johnson (ID: 2) |\n| **Email** | rod@somewhere.com |\n| **Ciudad** | San Francisco |\n\n### Productos incluidos:\n| Producto | ID | Precio | Cantidad |\n|---|---|---|---|\n| Apple TV | 4 | $100.00 | 1 |\n| iPod nano | 3 | $1.00 | 1 |\n\n| **Total estimado** | **$101.00** |\n|---|---|\n| **M\u00e9todo de pago** | Tarjeta de cr\u00e9dito |",
+  "tool_calls": [
+    {
+      "name": "get_customer",
+      "arguments": {
+        "customer_id": 2
+      },
+      "result": {
+        "id": 2,
+        "name": "Johnson",
+        "firstname": "Rod",
+        "email": "rod@somewhere.com",
+        "street": "Market Street",
+        "city": "San Francisco",
+        "_links": {
+          "self": {
+            "href": "http://localhost:18082/customer/2"
+          },
+          "customer": {
+            "href": "http://localhost:18082/customer/2"
+          }
+        }
+      },
+      "latency_ms": 71.1615479667671
+    },
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 4
+      },
+      "result": {
+        "id": 4,
+        "name": "Apple TV",
+        "price": 100.0,
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/4"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/4"
+          }
+        }
+      },
+      "latency_ms": 30.04095802316442
+    },
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 3
+      },
+      "result": {
+        "id": 3,
+        "name": "iPod nano",
+        "price": 1.0,
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/3"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/3"
+          }
+        }
+      },
+      "latency_ms": 30.25048301788047
+    },
+    {
+      "name": "create_order",
+      "arguments": {
+        "customer_id": 2,
+        "order_lines": [
+          {
+            "item_id": 4,
+            "count": 1
+          },
+          {
+            "item_id": 3,
+            "count": 1
+          }
+        ],
+        "payment_method": "credit card"
+      },
+      "result": {
+        "id": 8,
+        "customerId": 2,
+        "orderLine": [
+          {
+            "itemId": 4,
+            "count": 1
+          },
+          {
+            "itemId": 3,
+            "count": 1
+          }
+        ]
+      },
+      "latency_ms": 117.84935201285407
+    }
+  ]
+}

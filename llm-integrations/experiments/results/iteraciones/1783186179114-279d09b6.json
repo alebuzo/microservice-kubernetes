@@ -1,0 +1,65 @@
+{
+  "run_id": "1783186179114-279d09b6",
+  "timestamp_utc": "2026-07-04T17:29:39Z",
+  "mode": "mcp",
+  "scenario": "medio",
+  "schema_variant": "baseline",
+  "llm_round_trips": 3,
+  "tool_call_count": 2,
+  "total_latency_ms": 8516.61,
+  "tool_latency_ms_sum": 105.43,
+  "had_error": false,
+  "final_text": "Everything checks out! Here's a summary of the confirmed customer record:\n\n| Field | Value |\n|-----------|--------------------------|\n| **ID** | 13 |\n| **First Name** | Ada |\n| **Last Name** | Lovelace |\n| **Email** | ada@example.com |\n| **Street** | 12 Analytical Engine Row |\n| **City** | London |\n\nThe customer was successfully created and the lookup by ID returns exactly the details provided. \u2705",
+  "tool_calls": [
+    {
+      "name": "create_customer",
+      "arguments": {
+        "name": "Lovelace",
+        "firstname": "Ada",
+        "email": "ada@example.com",
+        "street": "12 Analytical Engine Row",
+        "city": "London"
+      },
+      "result": {
+        "id": 13,
+        "name": "Lovelace",
+        "firstname": "Ada",
+        "email": "ada@example.com",
+        "street": "12 Analytical Engine Row",
+        "city": "London",
+        "_links": {
+          "self": {
+            "href": "http://localhost:18082/customer/13"
+          },
+          "customer": {
+            "href": "http://localhost:18082/customer/13"
+          }
+        }
+      },
+      "latency_ms": 66.56639702850953
+    },
+    {
+      "name": "get_customer",
+      "arguments": {
+        "customer_id": 13
+      },
+      "result": {
+        "id": 13,
+        "name": "Lovelace",
+        "firstname": "Ada",
+        "email": "ada@example.com",
+        "street": "12 Analytical Engine Row",
+        "city": "London",
+        "_links": {
+          "self": {
+            "href": "http://localhost:18082/customer/13"
+          },
+          "customer": {
+            "href": "http://localhost:18082/customer/13"
+          }
+        }
+      },
+      "latency_ms": 38.86767802760005
+    }
+  ]
+}

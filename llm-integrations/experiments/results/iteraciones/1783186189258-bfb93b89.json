@@ -1,0 +1,81 @@
+{
+  "run_id": "1783186189258-bfb93b89",
+  "timestamp_utc": "2026-07-04T17:29:49Z",
+  "mode": "function_calling",
+  "scenario": "alto",
+  "schema_variant": "baseline",
+  "llm_round_trips": 3,
+  "tool_call_count": 3,
+  "total_latency_ms": 8571.59,
+  "tool_latency_ms_sum": 209.48,
+  "had_error": false,
+  "final_text": "The order was created successfully! Here's a summary:\n\n| Field | Value |\n|---|---|\n| **Order ID** | 7 |\n| **Customer** | Eberhard Wolff (ID 1) |\n| **Item** | iPod (ID 1) |\n| **Quantity** | 2 |\n| **Unit Price** | $42.00 |\n| **Total** | $84.00 |\n\nYour new order ID is **7**. \ud83c\udf89",
+  "tool_calls": [
+    {
+      "name": "get_customer",
+      "arguments": {
+        "customer_id": 1
+      },
+      "result": {
+        "id": 1,
+        "name": "Wolff",
+        "firstname": "Eberhard",
+        "email": "eberhard.wolff@gmail.com",
+        "street": "Unter den Linden",
+        "city": "Berlin",
+        "_links": {
+          "self": {
+            "href": "http://localhost:18082/customer/1"
+          },
+          "customer": {
+            "href": "http://localhost:18082/customer/1"
+          }
+        }
+      },
+      "latency_ms": 36.8991150171496
+    },
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 1
+      },
+      "result": {
+        "id": 1,
+        "name": "iPod",
+        "price": 42.0,
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/1"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/1"
+          }
+        }
+      },
+      "latency_ms": 28.833801043219864
+    },
+    {
+      "name": "create_order",
+      "arguments": {
+        "customer_id": 1,
+        "order_lines": [
+          {
+            "item_id": 1,
+            "count": 2
+          }
+        ]
+      },
+      "result": {
+        "id": 7,
+        "customerId": 1,
+        "orderLine": [
+          {
+            "itemId": 1,
+            "count": 2
+          }
+        ]
+      },
+      "latency_ms": 143.74333299929276
+    }
+  ]
+}

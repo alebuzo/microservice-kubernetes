@@ -1,0 +1,35 @@
+{
+  "run_id": "1783186084851-abd704d3",
+  "timestamp_utc": "2026-07-04T17:28:04Z",
+  "mode": "mcp",
+  "scenario": "bajo",
+  "schema_variant": "baseline",
+  "llm_round_trips": 2,
+  "tool_call_count": 1,
+  "total_latency_ms": 4347.33,
+  "tool_latency_ms_sum": 78.73,
+  "had_error": false,
+  "final_text": "The catalog item with ID **1** is an **iPod**, and it is priced at **$42.00**.",
+  "tool_calls": [
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 1
+      },
+      "result": {
+        "id": 1,
+        "name": "iPod",
+        "price": 42.0,
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/1"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/1"
+          }
+        }
+      },
+      "latency_ms": 78.7299019866623
+    }
+  ]
+}

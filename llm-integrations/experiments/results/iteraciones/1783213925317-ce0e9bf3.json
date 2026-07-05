@@ -1,0 +1,14 @@
+{
+  "run_id": "1783213925317-ce0e9bf3",
+  "timestamp_utc": "2026-07-05T01:12:05Z",
+  "mode": "function_calling",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 1,
+  "tool_call_count": 0,
+  "total_latency_ms": 3841.46,
+  "tool_latency_ms_sum": 0,
+  "had_error": false,
+  "final_text": "D\u00e9jame buscar esa informaci\u00f3n. Sin embargo, no tengo una forma directa de buscar productos por nombre, solo puedo consultarlos por su ID num\u00e9rico. Necesitar\u00eda que me proporciones el ID del iPod nano para poder buscarlo en el cat\u00e1logo.\n\n\u00bfTienes el ID del producto? Si me lo indicas, lo busco de inmediato. \ud83d\ude0a",
+  "tool_calls": []
+}

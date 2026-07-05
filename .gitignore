@@ -24,6 +24,3 @@ api_key
 *api_key*
 llm-integrations/.venv/
 llm-integrations/**/__pycache__/
-llm-integrations/**/*.csv
-llm-integrations/**/*.log
-llm-integrations/experiments/results/

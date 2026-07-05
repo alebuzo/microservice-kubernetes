@@ -1,0 +1,14 @@
+{
+  "run_id": "1783216281558-94140bbb",
+  "timestamp_utc": "2026-07-05T01:51:21Z",
+  "mode": "function_calling",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 1,
+  "tool_call_count": 0,
+  "total_latency_ms": 10998.27,
+  "tool_latency_ms_sum": 0,
+  "had_error": false,
+  "final_text": "Para crear la orden necesito encontrar primero al cliente y los productos. \u00a1Voy a buscar todo en paralelo ahora mismo!\n\nPrimero, necesito buscar al cliente Rod Johnson y los productos Apple TV e iPod nano. Sin embargo, no tengo los IDs de ninguno de ellos. Voy a intentar buscarlos, pero necesito que me proporciones los IDs correspondientes, ya que los servicios solo permiten b\u00fasqueda por ID num\u00e9rico.\n\n\u00bfPodr\u00edas proporcionarme los siguientes datos?\n\n1. \ud83e\uddd1 **ID del cliente** de Rod Johnson\n2. \ud83d\udce6 **ID del cat\u00e1logo** del Apple TV\n3. \ud83d\udce6 **ID del cat\u00e1logo** del iPod nano\n\nCon esos IDs podr\u00e9 crear la orden de inmediato. Tambi\u00e9n te comento que el **m\u00e9todo de pago (tarjeta de cr\u00e9dito)** no es un campo soportado actualmente por el servicio de \u00f3rdenes, por lo que no podr\u00e1 quedar registrado en la orden, pero podemos proceder con los dem\u00e1s datos. \ud83d\ude0a",
+  "tool_calls": []
+}

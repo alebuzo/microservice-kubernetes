@@ -1,0 +1,38 @@
+{
+  "run_id": "1783214889275-b6d26505",
+  "timestamp_utc": "2026-07-05T01:28:09Z",
+  "mode": "mcp",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 2,
+  "tool_call_count": 1,
+  "total_latency_ms": 4481.58,
+  "tool_latency_ms_sum": 63.35,
+  "had_error": false,
+  "final_text": "El precio del producto 1 (**iPod**) est\u00e1 expresado en **EUR (euros)**. Su precio es de **42,00 \u20ac**.",
+  "tool_calls": [
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 1
+      },
+      "result": {
+        "id": 1,
+        "name": "iPod",
+        "price": {
+          "amount": 42.0,
+          "currency": "EUR"
+        },
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/1"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/1"
+          }
+        }
+      },
+      "latency_ms": 63.352383964229375
+    }
+  ]
+}

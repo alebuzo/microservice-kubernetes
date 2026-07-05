@@ -1,0 +1,9 @@
+run_id,timestamp_utc,mode,scenario,schema_variant,llm_round_trips,tool_call_count,total_latency_ms,tool_latency_ms_sum,had_error
+1783214820417-5ec35932,2026-07-05T01:27:00Z,function_calling,manual,baseline,2,1,4353.77,45.34,False
+1783214863590-888c85df,2026-07-05T01:27:43Z,function_calling,manual,baseline,2,1,6079.64,30.34,False
+1783214889275-b6d26505,2026-07-05T01:28:09Z,mcp,manual,baseline,2,1,4481.58,63.35,False
+1783216281558-94140bbb,2026-07-05T01:51:21Z,function_calling,manual,baseline,1,0,10998.27,0,False
+1783216388295-b2975c47,2026-07-05T01:53:08Z,function_calling,manual,baseline,3,4,11942.8,257.25,True
+1783216434492-f0127673,2026-07-05T01:53:54Z,mcp,manual,baseline,4,5,16323.38,200.94,True
+1783218192184-ccaf80c5,2026-07-05T02:23:12Z,function_calling,manual,baseline,3,4,10529.67,205.37,False
+1783218424164-7c174d42,2026-07-05T02:27:04Z,mcp,manual,baseline,3,4,10066.05,249.3,False

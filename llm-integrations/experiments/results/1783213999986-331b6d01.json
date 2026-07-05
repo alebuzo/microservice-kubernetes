@@ -1,0 +1,35 @@
+{
+  "run_id": "1783213999986-331b6d01",
+  "timestamp_utc": "2026-07-05T01:13:19Z",
+  "mode": "mcp",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 2,
+  "tool_call_count": 1,
+  "total_latency_ms": 5722.68,
+  "tool_latency_ms_sum": 146.58,
+  "had_error": false,
+  "final_text": "No, el id **3** no corresponde al Apple TV. El producto con id 3 es el **iPod nano** (precio: $1.00).\n\nSi quieres, puedo buscar el Apple TV en otro id. Solo dime qu\u00e9 id quieres consultar, o si prefieres, puedo ir revisando varios ids para encontrarlo.",
+  "tool_calls": [
+    {
+      "name": "get_catalog_item",
+      "arguments": {
+        "item_id": 3
+      },
+      "result": {
+        "name": "iPod nano",
+        "price": 1.0,
+        "id_item": 3,
+        "_links": {
+          "self": {
+            "href": "http://localhost:18081/catalog/3"
+          },
+          "item": {
+            "href": "http://localhost:18081/catalog/3"
+          }
+        }
+      },
+      "latency_ms": 146.57765201991424
+    }
+  ]
+}

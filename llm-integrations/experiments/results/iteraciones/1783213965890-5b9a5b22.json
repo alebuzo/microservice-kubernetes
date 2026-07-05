@@ -1,0 +1,14 @@
+{
+  "run_id": "1783213965890-5b9a5b22",
+  "timestamp_utc": "2026-07-05T01:12:45Z",
+  "mode": "mcp",
+  "scenario": "manual",
+  "schema_variant": "baseline",
+  "llm_round_trips": 1,
+  "tool_call_count": 0,
+  "total_latency_ms": 4313.23,
+  "tool_latency_ms_sum": 0,
+  "had_error": false,
+  "final_text": "D\u00e9jame buscar esa informaci\u00f3n. Sin embargo, no tengo una funci\u00f3n de b\u00fasqueda por nombre en el cat\u00e1logo; solo puedo consultar productos por su ID num\u00e9rico. \u00bfPodr\u00edas proporcionarme el ID del producto para buscarlo? O si tienes un rango de IDs posibles, puedo consultarlos uno por uno para encontrar el iPod nano.",
+  "tool_calls": []
+}
